@@ -1,0 +1,33 @@
+From 6c57f743bdaf1f81723236e1aad87cbb784f402b Mon Sep 17 00:00:00 2001
+From: Nils Asmussen <nils@os.inf.tu-dresden.de>
+Date: Fri, 15 Mar 2024 13:13:57 +0100
+Subject: [PATCH] Disable use of settimeofday.
+
+---
+ util-linux/hwclock.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/util-linux/hwclock.c b/util-linux/hwclock.c
+index e6f0043d0..f178f1a2c 100644
+--- a/util-linux/hwclock.c
++++ b/util-linux/hwclock.c
+@@ -132,6 +132,7 @@ static void show_clock(const char **pp_rtcname, int utc)
+ 
+ static void set_kernel_tz(const struct timezone *tz)
+ {
++#if 0
+ #if LIBC_IS_MUSL
+ 	/* musl libc does not pass tz argument to syscall
+ 	 * because "it's deprecated by POSIX, therefore it's fine
+@@ -146,6 +147,8 @@ static void set_kernel_tz(const struct timezone *tz)
+ #endif
+ 	if (ret)
+ 		bb_simple_perror_msg_and_die("settimeofday");
++#endif
++    (void)tz;
+ }
+ 
+ /*
+-- 
+2.34.1
+
