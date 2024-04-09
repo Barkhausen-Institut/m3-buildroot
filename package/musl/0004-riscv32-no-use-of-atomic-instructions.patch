@@ -1,0 +1,36 @@
+From 108081ba93cdda175085979e836d579586bcf206 Mon Sep 17 00:00:00 2001
+From: Nils Asmussen <nils@os.inf.tu-dresden.de>
+Date: Tue, 9 Apr 2024 14:50:45 +0200
+Subject: [PATCH] foo
+
+---
+ arch/riscv32/atomic_arch.h | 15 ++++-----------
+ 1 file changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/arch/riscv32/atomic_arch.h b/arch/riscv32/atomic_arch.h
+index 4d418f63..b851cfe5 100644
+--- a/arch/riscv32/atomic_arch.h
++++ b/arch/riscv32/atomic_arch.h
+@@ -7,15 +7,8 @@ static inline void a_barrier()
+ #define a_cas a_cas
+ static inline int a_cas(volatile int *p, int t, int s)
+ {
+-	int old, tmp;
+-	__asm__ __volatile__ (
+-		"\n1:	lr.w.aqrl %0, (%2)\n"
+-		"	bne %0, %3, 1f\n"
+-		"	sc.w.aqrl %1, %4, (%2)\n"
+-		"	bnez %1, 1b\n"
+-		"1:"
+-		: "=&r"(old), "=&r"(tmp)
+-		: "r"(p), "r"((long)t), "r"((long)s)
+-		: "memory");
+-	return old;
++    int old = *p;
++    if(old == t)
++        *p = s;
++    return old;
+ }
+-- 
+2.39.2
+
